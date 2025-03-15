@@ -31,7 +31,8 @@ export class ElonService {
 
   async findOne(id: string) {
     try {
-      
+      let data = await this.elonModel.findById(id);
+      return data
     } catch (error) {
       return {message: error.message}
     }
@@ -39,7 +40,8 @@ export class ElonService {
 
   async update(id: string, updateElonDto: UpdateElonDto) {
     try {
-      
+      let apdated = await this.elonModel.findByIdAndUpdate(id, updateElonDto);
+      return apdated
     } catch (error) {
       return {message: error.message}
     }
@@ -47,7 +49,8 @@ export class ElonService {
 
   async remove(id: string) {
     try {
-      
+      let deleted = await this.elonModel.findByIdAndDelete(id);
+      return deleted
     } catch (error) {
       return {message: error.message}
     }
