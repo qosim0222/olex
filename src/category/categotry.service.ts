@@ -21,7 +21,7 @@ export class CategotryService {
   
    async findAll() {
       try {
-        let all = await this.cateCategoryModel.find().exec()
+        let all = await this.cateCategoryModel.find().populate('elon').exec()
         return all
       } catch (error) {
         return {message: error.message}
@@ -32,7 +32,7 @@ export class CategotryService {
   
     async findOne(id: string) {
       try {
-        let data = await this.cateCategoryModel.findById(id);
+        let data = await this.cateCategoryModel.findById(id).populate('elon').exec();
         return data
       } catch (error) {
         return {message: error.message}
