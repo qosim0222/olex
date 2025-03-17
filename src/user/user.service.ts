@@ -39,7 +39,7 @@ export class UserService {
       });
 
       await this.regionModel.findByIdAndUpdate(region, {
-        $push: { users: newUser._id },
+        $push: { user: newUser._id },
       });
 
       return { data: newUser };
@@ -71,7 +71,7 @@ export class UserService {
 
   async findAll() {
     try {
-      let all = await this.userModel.find();
+      let all = await this.userModel.find().populate({path: "region", select: "-user"}).exec();;
       return  all ;
     } catch (error) {
       throw new BadRequestException(error.message);
@@ -80,7 +80,7 @@ export class UserService {
 
   async findOne(id: string) {
     try {
-      let data = await this.userModel.findById(id).populate("region").exec();
+      let data = await this.userModel.findById(id).populate({ path: "region", select: '-user'}).exec();
       if (!data) {
         throw new NotFoundException('User not found');
       }

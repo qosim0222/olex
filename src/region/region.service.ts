@@ -23,7 +23,7 @@ export class RegionService {
  
   async findAll() {
      try {
-       let all = await this.regionModel.find().exec()
+       let all = await this.regionModel.find().populate('user').exec()
        return all
      } catch (error) {
        return {message: error.message}

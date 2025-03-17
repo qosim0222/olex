@@ -10,7 +10,7 @@ import { Category } from 'src/category/entities/categotry.entity';
 export class ElonService {
 
   constructor(
-    @InjectModel(Elon.name) private elonModel: Model<Elon>, 
+    @InjectModel(Elon.name) private elonModel: Model<Elon>,
     @InjectModel(Category.name) private categoryModel: Model<Category>
   ) { }
 
@@ -19,7 +19,7 @@ export class ElonService {
       let created = await this.elonModel.create(createElonDto)
 
       await this.categoryModel.findByIdAndUpdate(created.categoryId, {
-        $push: {elon: created._id}
+        $push: { elon: { $each: [created._id] } }
       })
       return created
     } catch (error) {
@@ -61,9 +61,9 @@ export class ElonService {
       let deleted = await this.elonModel.findByIdAndDelete(id);
 
       await this.categoryModel.findByIdAndUpdate(deleted?.categoryId, {
-        $pull: {elon: deleted?._id}
+        $pull: { elon: deleted?._id }
       })
-      
+
       return deleted
     } catch (error) {
       return { message: error.message }
