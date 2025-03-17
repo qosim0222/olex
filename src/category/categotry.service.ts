@@ -19,16 +19,32 @@ export class CategotryService {
      }
     }
   
-   async findAll() {
+    async findAll(query: any) {
       try {
-        let all = await this.cateCategoryModel.find().populate('elon').exec()
-        return all
-      } catch (error) {
-        return {message: error.message}
+        const page = parseInt(query.page) || 1;
+        const limit = parseInt(query.limit) || 10;
+        const sortBy = query.sortBy || 'createdAt';
+        const sortOrder = query.sortOrder === 'asc' ? 1 : -1;
   
+        const filter: any = {};
+        if (query.name) filter.name = new RegExp(query.name, 'i');
+  
+        const data = await this.cateCategoryModel
+          .find(filter)
+          .sort({ [sortBy]: sortOrder })
+          .skip((page - 1) * limit)
+          .limit(limit)
+          .populate('elon')
+          .exec();
+  
+        const total = await this.cateCategoryModel.countDocuments(filter);
+  
+        return { data, page, limit, total };
+      } catch (error) {
+        return { message: error.message };
       }
-       
     }
+  
   
     async findOne(id: string) {
       try {

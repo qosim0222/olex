@@ -1,8 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
 import { RegionService } from './region.service';
 import { CreateRegionDto } from './dto/create-region.dto';
 import { UpdateRegionDto } from './dto/update-region.dto';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('region')
@@ -15,9 +15,15 @@ export class RegionController {
   }
 
   @Get()
-  findAll() {
-    return this.regionService.findAll();
+  @ApiQuery({ name: 'name', required: false, description:" Region nomi bo'yicha qidirish" })
+  @ApiQuery({ name: 'page', required: false, description: 'Sahifalash uchun sahifa raqami' })
+  @ApiQuery({ name: 'limit', required: false, description: 'Bir sahifada nechta natija bo‘lishi' })
+  @ApiQuery({ name: 'sortBy', required: false, description: 'Qaysi ustun bo‘yicha tartiblash' })
+  @ApiQuery({ name: 'sortOrder', required: false, description: 'Tartiblash tartibi (asc yoki desc)' })
+  findAll(@Query() query: any) {
+    return this.regionService.findAll(query);
   }
+
   @UseGuards(AuthGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {

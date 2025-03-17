@@ -21,17 +21,29 @@ export class RegionService {
     }
    }
  
-  async findAll() {
-     try {
-       let all = await this.regionModel.find().populate('user').exec()
-       return all
-     } catch (error) {
-       return {message: error.message}
- 
-     }
-      
-   }
- 
+   async findAll(query: any) {
+    try {
+      const page = parseInt(query.page) || 1;
+      const limit = parseInt(query.limit) || 10;
+      const sortBy = query.sortBy || 'id';
+      const sortOrder = query.sortOrder === 'asc' ? 1 : -1;
+
+      const filter: any = {};
+      if (query.name) filter.name = new RegExp(query.name, 'i'); 
+
+      const regions = await this.regionModel
+        .find(filter)
+        .populate('user')
+        .sort({ [sortBy]: sortOrder })
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .exec();
+
+      return { regions, page, limit };
+    } catch (error) {
+      return { message: error.message };
+    }
+  }
    async findOne(id: string) {
      try {
        let data = await this.regionModel.findById(id);

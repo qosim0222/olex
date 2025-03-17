@@ -18,14 +18,31 @@ export class OrderService {
     }
   }
 
-  async findAll() {
+  async findAll(query: any) {
     try {
-      let all = await this.orderModel.find().populate('userId').populate('elonId').exec();
-      return all;
+      const page = parseInt(query.page) || 1;
+      const limit = parseInt(query.limit) || 10;
+      const sortBy = query.sortBy || 'createdAt';
+      const sortOrder = query.sortOrder === 'asc' ? 1 : -1;
+
+      const filter: any = {};
+      if (query.userId) filter.userId = query.userId; 
+      if (query.elonId) filter.elonId = query.elonId; 
+      const orders = await this.orderModel
+        .find(filter)
+        .populate('userId')
+        .populate('elonId')
+        .sort({ [sortBy]: sortOrder })
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .exec();
+
+      return { orders, page, limit };
     } catch (error) {
       return { message: error.message };
     }
   }
+
 
   async findOne(id: string) {
     try {

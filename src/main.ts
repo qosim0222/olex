@@ -9,7 +9,10 @@ async function bootstrap() {
   .setTitle('Olex example')
   .setDescription('The Olex API description')
   .setVersion('1.0')
-  .build();
+  .addSecurityRequirements("bearer",["bearer"])
+  .addBearerAuth()
+  .build()
+
 const documentFactory = () => SwaggerModule.createDocument(app, config);
 SwaggerModule.setup('api', app, documentFactory);
 

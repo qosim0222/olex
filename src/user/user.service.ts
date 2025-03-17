@@ -68,15 +68,28 @@ export class UserService {
       throw new BadRequestException(error.message);
     }
   }
+  async findAll(query: any) {
+    const page = parseInt(query.page) || 1;
+    const limit = parseInt(query.limit) || 10;
+    const sortBy = query.sortBy || 'createdAt';
+    const sortOrder = query.sortOrder === 'asc' ? 1 : -1;
 
-  async findAll() {
-    try {
-      let all = await this.userModel.find().populate({path: "region", select: "-user"}).exec();;
-      return  all ;
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
-  }
+    const filter: any = {};
+    if (query.region) filter.region = query.region;
+    if (query.name) filter.name = new RegExp(query.name, 'i');
+    if (query.fullname) filter.fullname = new RegExp(query.fullname, 'i'); 
+
+
+    const users = await this.userModel.find(filter)
+      .populate({ path: "region", select: "-user" })
+      .sort({ [sortBy]: sortOrder })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .exec();
+
+    return { users, page, limit };
+}
+
 
   async findOne(id: string) {
     try {
