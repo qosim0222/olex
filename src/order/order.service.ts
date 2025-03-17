@@ -53,21 +53,4 @@ export class OrderService {
     }
   }
 
-  async update(id: string, updateOrderDto: UpdateOrderDto) {
-    try {
-      let updated = await this.orderModel.findByIdAndUpdate(id, updateOrderDto, { new: true }).exec();
-      return updated;
-    } catch (error) {
-      return { message: error.message };
-    }
-  }
-
-  async remove(id: string) {
-    try {
-      let deleted = await this.orderModel.findByIdAndDelete(id).exec();
-      return deleted;
-    } catch (error) {
-      return { message: error.message };
-    }
-  }
 }
